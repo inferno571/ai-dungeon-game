@@ -1,4 +1,4 @@
-// DOOM Crawler App.js - Enhanced with SFX, Music, Voice Narration, Spawn Sounds, and Rare Cyberdemon
+// DOOM Crawler App.js - Polished version with SFX, Music, Gun-based combat, Spawn Sounds, and Cyberdemon logic
 
 let player = {
   health: 100,
@@ -47,13 +47,6 @@ function playSFX(name) {
   audio.play().catch(err => console.error("SFX error:", err));
 }
 
-function narrateWithVoice(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.9;
-  utterance.pitch = 0.7;
-  speechSynthesis.speak(utterance);
-}
-
 async function connectWallet() {
   if (!window.ethereum) {
     alert("MetaMask not found");
@@ -74,13 +67,14 @@ async function startGame() {
     await tx.wait();
     alert("🎮 On-chain game started!");
     playSFX("power_surge.wav");
+    bgMusic.play();
   } catch (err) {
     console.error("Error starting game:", err);
     alert("❌ Could not start game");
   }
 }
 
-async function simulateEncounter() {
+function simulateEncounterWithWeapon(weapon) {
   const enemyList = getEnemyTypes();
   const enemy = enemyList[Math.floor(Math.random() * enemyList.length)];
   const isCyberdemon = enemy === "Cyberdemon";
@@ -89,6 +83,7 @@ async function simulateEncounter() {
   document.getElementById("enemy-image").src = `images/${enemy.toLowerCase().replace(/ /g, '_')}.png`;
   document.getElementById("enemy-name").innerText = enemy;
   playSFX(`${enemy.toLowerCase().replace(/ /g, '_')}_spawn.wav`);
+  playSFX(`${weapon.toLowerCase().replace(/ /g, '_')}_fire.wav`);
 
   player.kills++;
   player.health -= damage;
@@ -104,7 +99,7 @@ async function simulateEncounter() {
     playSFX("power_surge.wav");
   }
 
-  playSFX("imp_scream.wav"); // always play scream in sim
+  playSFX("imp_scream.wav");
 
   try {
     if (!contract) await connectWallet();
@@ -114,10 +109,10 @@ async function simulateEncounter() {
     console.error("Error logging kill:", err);
   }
 
-  const narration = await getGroqNarration(enemy);
-  narrateWithVoice(narration);
-  player.log.unshift(`🩸 ${narration}\n`);
-  updateSimUI();
+  getGroqNarration(enemy, weapon).then(narration => {
+    player.log.unshift(`🩸 ${narration}\n`);
+    updateSimUI();
+  });
 }
 
 function lootWeapon() {
@@ -129,7 +124,7 @@ function lootWeapon() {
 
     const shootBtn = document.createElement("button");
     shootBtn.innerText = `Shoot ${weapon}`;
-    shootBtn.onclick = () => playSFX(`${weapon.toLowerCase().replace(/ /g, '_')}_fire.wav`);
+    shootBtn.onclick = () => simulateEncounterWithWeapon(weapon);
     document.querySelector(".controls").appendChild(shootBtn);
   } else {
     player.log.unshift(`🔁 Already have: ${weapon}\n`);
@@ -163,8 +158,8 @@ function updateDoomguyFace() {
   else face.src = "images/doomguy_angry.png";
 }
 
-async function getGroqNarration(enemy) {
-  const prompt = `You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back. Describe the battle in about 150 words. Player health: ${player.health}, weapon: ${player.weapons.at(-1) || 'fists'}`;
+async function getGroqNarration(enemy, weaponUsed) {
+  const prompt = `You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back using their ${weaponUsed}. Describe the brutal combat in 150 words. Player health: ${player.health}`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -190,9 +185,8 @@ async function getGroqNarration(enemy) {
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("connectWallet")?.addEventListener("click", connectWallet);
   document.getElementById("startGame")?.addEventListener("click", startGame);
-  document.getElementById("simFight")?.addEventListener("click", simulateEncounter);
   document.getElementById("simLoot")?.addEventListener("click", lootWeapon);
   document.getElementById("simReset")?.addEventListener("click", resetSim);
+  document.getElementById("muteBtn")?.addEventListener("click", toggleMusic);
   updateSimUI();
-  bgMusic.play().catch(() => {});
 });
