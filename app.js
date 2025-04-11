@@ -1,4 +1,4 @@
-// DOOM Crawler App.js - Enhanced with SFX, Music, Voice Narration
+// DOOM Crawler App.js - Enhanced with SFX, Music, Voice Narration, Spawn Sounds, and Rare Cyberdemon
 
 let player = {
   health: 100,
@@ -8,7 +8,12 @@ let player = {
   log: []
 };
 
-const enemyTypes = ["Imp", "Cacodemon", "Baron of Hell"];
+function getEnemyTypes() {
+  const baseEnemies = ["Imp", "Cacodemon", "Baron of Hell"];
+  if (player.level >= 5) baseEnemies.push("Cyberdemon");
+  return baseEnemies;
+}
+
 const weaponsPool = ["Shotgun", "Chainsaw", "Rocket Launcher", "Plasma Rifle"];
 
 let contract;
@@ -76,11 +81,14 @@ async function startGame() {
 }
 
 async function simulateEncounter() {
-  const enemy = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-  const damage = Math.floor(Math.random() * (enemy === "Baron of Hell" ? 40 : 25)) + 10;
+  const enemyList = getEnemyTypes();
+  const enemy = enemyList[Math.floor(Math.random() * enemyList.length)];
+  const isCyberdemon = enemy === "Cyberdemon";
+  const damage = Math.floor(Math.random() * (isCyberdemon ? 60 : enemy === "Baron of Hell" ? 40 : 25)) + 10;
 
   document.getElementById("enemy-image").src = `images/${enemy.toLowerCase().replace(/ /g, '_')}.png`;
   document.getElementById("enemy-name").innerText = enemy;
+  playSFX(`${enemy.toLowerCase().replace(/ /g, '_')}_spawn.wav`);
 
   player.kills++;
   player.health -= damage;
@@ -96,11 +104,12 @@ async function simulateEncounter() {
     playSFX("power_surge.wav");
   }
 
+  playSFX("imp_scream.wav"); // always play scream in sim
+
   try {
     if (!contract) await connectWallet();
     const tx = await contract.logKill(enemy);
     await tx.wait();
-    playSFX("imp_scream.wav");
   } catch (err) {
     console.error("Error logging kill:", err);
   }
