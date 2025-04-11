@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🩸 DOOM AI Dungeon</title>
+  <title>DOOM AI Dungeon</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <button id="muteBtn" onclick="toggleMusic()">🔊</button>
+
   <div class="overlay">
-    <h1>DOOM AI DUNGEON</h1>
+    <h1>🩸 DOOM AI Dungeon</h1>
 
     <div class="hud">
       <span id="hud-health">❤️ Health: 100</span>
@@ -22,6 +23,7 @@
         <img id="enemy-image" src="images/imp.png" alt="Enemy" />
         <p id="enemy-name">Imp</p>
       </div>
+      <img id="doomguy-face" src="images/doomguy_neutral.png" class="doomguy-face" />
     </div>
 
     <div class="controls">
@@ -33,12 +35,9 @@
     </div>
 
     <pre id="simStats" class="terminal"></pre>
-    <pre id="simLogOld" class="terminal"></pre>
     <pre id="simLog" class="narration-box"></pre>
-
   </div>
 
-  <!-- Load ethers globally (for GitHub Pages) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
