@@ -1,4 +1,4 @@
-// DOOM Crawler App.js - Enhanced with SFX and Smarter AI
+// DOOM Crawler App.js - Enhanced with SFX, Music, Voice Narration
 
 let player = {
   health: 100,
@@ -23,9 +23,30 @@ const abi = [
   "function getWeapons(address _player) public view returns (string[] memory)"
 ];
 
+const bgMusic = new Audio("sfx/bg_music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.3;
+
+function toggleMusic() {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    document.getElementById("muteBtn").innerText = "🔊";
+  } else {
+    bgMusic.pause();
+    document.getElementById("muteBtn").innerText = "🔇";
+  }
+}
+
 function playSFX(name) {
   const audio = new Audio(`sfx/${name}`);
   audio.play().catch(err => console.error("SFX error:", err));
+}
+
+function narrateWithVoice(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.9;
+  utterance.pitch = 0.7;
+  speechSynthesis.speak(utterance);
 }
 
 async function connectWallet() {
@@ -85,7 +106,8 @@ async function simulateEncounter() {
   }
 
   const narration = await getGroqNarration(enemy);
-  player.log.unshift(`🩸 ${narration}`);
+  narrateWithVoice(narration);
+  player.log.unshift(`🩸 ${narration}\n`);
   updateSimUI();
 }
 
@@ -93,10 +115,15 @@ function lootWeapon() {
   const weapon = weaponsPool[Math.floor(Math.random() * weaponsPool.length)];
   if (!player.weapons.includes(weapon)) {
     player.weapons.push(weapon);
-    player.log.unshift(`🔫 Found: ${weapon}`);
+    player.log.unshift(`🔫 Found: ${weapon}\n`);
     playSFX("pickup_weapon.wav");
+
+    const shootBtn = document.createElement("button");
+    shootBtn.innerText = `Shoot ${weapon}`;
+    shootBtn.onclick = () => playSFX(`${weapon.toLowerCase().replace(/ /g, '_')}_fire.wav`);
+    document.querySelector(".controls").appendChild(shootBtn);
   } else {
-    player.log.unshift(`🔁 Already have: ${weapon}`);
+    player.log.unshift(`🔁 Already have: ${weapon}\n`);
   }
 
   if (contract) {
@@ -116,7 +143,15 @@ function updateSimUI() {
   document.getElementById("hud-level").innerText = `⚔️ Level: ${player.level}`;
   document.getElementById("hud-kills").innerText = `💀 Kills: ${player.kills}`;
   document.getElementById("simStats").innerText = `🧠 Weapons: ${player.weapons.join(", ")}`;
-  document.getElementById("simLog").innerText = player.log.slice(0, 5).join("\n");
+  document.getElementById("simLog").innerText = player.log.slice(0, 5).join("\n\n");
+  updateDoomguyFace();
+}
+
+function updateDoomguyFace() {
+  const face = document.getElementById("doomguy-face");
+  if (player.health >= 70) face.src = "images/doomguy_neutral.png";
+  else if (player.health >= 30) face.src = "images/doomguy_hurt.png";
+  else face.src = "images/doomguy_angry.png";
 }
 
 async function getGroqNarration(enemy) {
@@ -149,8 +184,6 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("simFight")?.addEventListener("click", simulateEncounter);
   document.getElementById("simLoot")?.addEventListener("click", lootWeapon);
   document.getElementById("simReset")?.addEventListener("click", resetSim);
-  document.getElementById("simLog").innerText = player.log.slice(0, 5).join("\n");
-
-
   updateSimUI();
+  bgMusic.play().catch(() => {});
 });
