@@ -70,3 +70,15 @@ button:hover {
   overflow-y: auto;
   font-size: 10px;
 }
+.narration-box {
+  background-color: #111;
+  color: #0f0;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 600px; /* adjust width as needed */
+  margin: 1rem auto;
+  overflow-y: auto;
+}
