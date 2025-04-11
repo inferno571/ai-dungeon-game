@@ -1,4 +1,4 @@
-// DOOM Crawler App.js - Monad Integrated for Hackathon
+// DOOM Crawler App.js - Enhanced with SFX and Smarter AI
 
 let player = {
   health: 100,
@@ -23,6 +23,11 @@ const abi = [
   "function getWeapons(address _player) public view returns (string[] memory)"
 ];
 
+function playSFX(name) {
+  const audio = new Audio(`sfx/${name}`);
+  audio.play().catch(err => console.error("SFX error:", err));
+}
+
 async function connectWallet() {
   if (!window.ethereum) {
     alert("MetaMask not found");
@@ -42,6 +47,7 @@ async function startGame() {
     const tx = await contract.updateProgress(1, "Start");
     await tx.wait();
     alert("🎮 On-chain game started!");
+    playSFX("power_surge.wav");
   } catch (err) {
     console.error("Error starting game:", err);
     alert("❌ Could not start game");
@@ -50,7 +56,7 @@ async function startGame() {
 
 async function simulateEncounter() {
   const enemy = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-  const damage = Math.floor(Math.random() * 30) + 5;
+  const damage = Math.floor(Math.random() * (enemy === "Baron of Hell" ? 40 : 25)) + 10;
 
   document.getElementById("enemy-image").src = `images/${enemy.toLowerCase().replace(/ /g, '_')}.png`;
   document.getElementById("enemy-name").innerText = enemy;
@@ -58,17 +64,22 @@ async function simulateEncounter() {
   player.kills++;
   player.health -= damage;
   if (player.health <= 0) {
+    playSFX("death_roar.wav");
     alert("💀 You died. Game over.");
     resetSim();
     return;
   }
 
-  if (player.kills % 3 === 0) player.level++;
+  if (player.kills % 3 === 0) {
+    player.level++;
+    playSFX("power_surge.wav");
+  }
 
   try {
     if (!contract) await connectWallet();
     const tx = await contract.logKill(enemy);
     await tx.wait();
+    playSFX("imp_scream.wav");
   } catch (err) {
     console.error("Error logging kill:", err);
   }
@@ -83,11 +94,11 @@ function lootWeapon() {
   if (!player.weapons.includes(weapon)) {
     player.weapons.push(weapon);
     player.log.unshift(`🔫 Found: ${weapon}`);
+    playSFX("pickup_weapon.wav");
   } else {
     player.log.unshift(`🔁 Already have: ${weapon}`);
   }
 
-  // Log on-chain
   if (contract) {
     contract.mintWeapon(weapon).catch(err => console.error("mintWeapon error", err));
   }
@@ -109,7 +120,7 @@ function updateSimUI() {
 }
 
 async function getGroqNarration(enemy) {
-  const prompt = `You're a gritty DOOM narrator. The player just killed a ${enemy} in a brutal way. Give one brutal sentence.`;
+  const prompt = `You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back. Describe the battle in about 150 words. Player health: ${player.health}, weapon: ${player.weapons.at(-1) || 'fists'}`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -128,7 +139,7 @@ async function getGroqNarration(enemy) {
     return data?.choices?.[0]?.message?.content || "Another demon bites the dust.";
   } catch (err) {
     console.error("Groq error:", err);
-    return "Silence echoes as the blood dries.";
+    return "Static crackles. The demon's scream fades into silence.";
   }
 }
 
