@@ -10,7 +10,7 @@ let player = {
 
 function getEnemyTypes() {
   const baseEnemies = ["Imp", "Cacodemon", "Baron of Hell"];
-  if (player.level >= 5) baseEnemies.push("Cyberdemon");
+  if (player.level >= 2) baseEnemies.push("Cyberdemon");
   return baseEnemies;
 }
 
