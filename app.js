@@ -44,7 +44,8 @@ function toggleMusic() {
 
 function playSFX(name) {
   const audio = new Audio(`sfx/${name}`);
-  audio.play().catch(err => console.error("SFX error:", err));
+  audio.addEventListener("error", () => console.error(`Failed to load SFX: ${name}`));
+  audio.play();
 }
 
 async function connectWallet() {
@@ -74,7 +75,7 @@ async function startGame() {
   }
 }
 
-function simulateEncounterWithWeapon(weapon) {
+async function simulateEncounterWithWeapon(weapon) {
   const enemyList = getEnemyTypes();
   const enemy = enemyList[Math.floor(Math.random() * enemyList.length)];
   const isCyberdemon = enemy === "Cyberdemon";
@@ -109,10 +110,13 @@ function simulateEncounterWithWeapon(weapon) {
     console.error("Error logging kill:", err);
   }
 
-  getGroqNarration(enemy, weapon).then(narration => {
+  try {
+    const narration = await getGroqNarration(enemy, weapon);
     player.log.unshift(`🩸 ${narration}\n`);
     updateSimUI();
-  });
+  } catch (err) {
+    console.error("Error fetching narration:", err);
+  }
 }
 
 function lootWeapon() {
@@ -160,13 +164,12 @@ function updateDoomguyFace() {
 
 async function getGroqNarration(enemy, weaponUsed) {
   const prompt = `You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back using their ${weaponUsed}. Describe the brutal combat in 150 words. Player health: ${player.health}`;
-
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
+        "Authorization": "Bearer YOUR_API_KEY_HERE"
       },
       body: JSON.stringify({
         model: "meta-llama/llama-4-scout-17b-16e-instruct",
