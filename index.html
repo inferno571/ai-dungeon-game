@@ -2,22 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DOOM AI Dungeon</title>
+  <title>🩸 DOOM AI Dungeon</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <button id="muteBtn" onclick="toggleMusic()">🔊</button>
+
+  <!-- Mute Button -->
+  <button id="muteBtn">🔊</button>
 
   <div class="overlay">
     <h1>🩸 DOOM AI Dungeon</h1>
 
+    <!-- HUD -->
     <div class="hud">
       <span id="hud-health">❤️ Health: 100</span>
       <span id="hud-level">⚔️ Level: 1</span>
       <span id="hud-kills">💀 Kills: 0</span>
     </div>
 
+    <!-- Arena -->
     <div class="arena">
       <div class="enemy-box">
         <img id="enemy-image" src="images/imp.png" alt="Enemy" />
@@ -26,18 +30,20 @@
       <img id="doomguy-face" src="images/doomguy_neutral.png" class="doomguy-face" />
     </div>
 
+    <!-- Controls -->
     <div class="controls">
       <button id="connectWallet">🔌 Connect Wallet</button>
       <button id="startGame">🎮 Start On-Chain</button>
-      <button id="simFight">☠️ Simulate Fight</button>
       <button id="simLoot">🧨 Loot Weapon</button>
       <button id="simReset">🔄 Reset</button>
     </div>
 
+    <!-- Info Panels -->
     <pre id="simStats" class="terminal"></pre>
     <pre id="simLog" class="narration-box"></pre>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
