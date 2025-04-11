@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: url('images/doom_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Press Start 2P', monospace;
+  color: #ff4c4c;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2rem;
+  margin: 2rem auto;
+  width: 90%;
+  max-width: 800px;
+  border: 2px solid #ff0000;
+  border-radius: 10px;
+}
+
+h1 {
+  text-align: center;
+  color: #ff0000;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  color: #ff4c4c;
+}
+
+.enemy-box {
+  text-align: center;
+}
+
+.enemy-box img {
+  width: 150px;
+  border: 3px solid red;
+  border-radius: 10px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #990000;
+  border: 2px solid #ff4c4c;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #cc0000;
+}
+
+.terminal {
+  background-color: #111;
+  color: #0f0;
+  padding: 10px;
+  margin-top: 1rem;
+  height: 120px;
+  overflow-y: auto;
+  font-size: 10px;
+}

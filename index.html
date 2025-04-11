@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🩸 DOOM AI Dungeon</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="overlay">
+    <h1>☠️ DOOM AI DUNGEON</h1>
+
+    <div class="hud">
+      <span id="hud-health">❤️ Health: 100</span>
+      <span id="hud-level">⚔️ Level: 1</span>
+      <span id="hud-kills">💀 Kills: 0</span>
+    </div>
+
+    <div class="arena">
+      <div class="enemy-box">
+        <img id="enemy-image" src="images/imp.png" alt="Enemy" />
+        <p id="enemy-name">Imp</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="connectWallet">🔌 Connect Wallet</button>
+      <button id="startGame">🎮 Start On-Chain</button>
+      <button id="simFight">☠️ Simulate Fight</button>
+      <button id="simLoot">🧨 Loot Weapon</button>
+      <button id="simReset">🔄 Reset</button>
+    </div>
+
+    <pre id="simStats" class="terminal"></pre>
+    <pre id="simLog" class="terminal"></pre>
+  </div>
+</body>
+</html>
