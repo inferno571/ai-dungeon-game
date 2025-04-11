@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com;" />
   <title>🩸 DOOM AI Dungeon</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -9,7 +10,7 @@
 <body>
 
   <!-- Mute Button -->
-  <button id="muteBtn">🔊</button>
+  <button id="muteBtn" aria-label="Mute or unmute game audio">🔊</button>
 
   <div class="overlay">
     <h1>🩸 DOOM AI Dungeon</h1>
@@ -24,28 +25,28 @@
     <!-- Arena -->
     <div class="arena">
       <div class="enemy-box">
-        <img id="enemy-image" src="images/imp.png" alt="Enemy" />
+        <img id="enemy-image" src="images/imp.png" alt="Enemy character Imp" loading="lazy" />
         <p id="enemy-name">Imp</p>
       </div>
-      <img id="doomguy-face" src="images/doomguy_neutral.png" class="doomguy-face" />
+      <img id="doomguy-face" src="images/doomguy_neutral.png" class="doomguy-face" alt="Neutral expression of Doomguy" loading="lazy" />
     </div>
 
     <!-- Controls -->
     <div class="controls">
-      <button id="connectWallet">🔌 Connect Wallet</button>
-      <button id="startGame">🎮 Start On-Chain</button>
-      <button id="simLoot">🧨 Loot Weapon</button>
-      <button id="simReset">🔄 Reset</button>
+      <button id="connectWallet" aria-label="Connect your wallet for the game">🔌 Connect Wallet</button>
+      <button id="startGame" aria-label="Start the game on-chain">🎮 Start On-Chain</button>
+      <button id="simLoot" aria-label="Simulate looting a weapon">🧨 Loot Weapon</button>
+      <button id="simReset" aria-label="Reset the game simulation">🔄 Reset</button>
     </div>
 
     <!-- Info Panels -->
-    <pre id="simStats" class="terminal"></pre>
-    <pre id="simLog" class="narration-box"></pre>
+    <pre id="simStats" class="terminal" aria-label="Simulation statistics panel"></pre>
+    <pre id="simLog" class="narration-box" aria-label="Narration log panel"></pre>
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" defer integrity="sha384-..." crossorigin="anonymous"></script>
+  <script type="module" src="app.js" defer></script>
 
 </body>
 </html>
