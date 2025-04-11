@@ -1,14 +1,23 @@
 body {
-  background: black;
-  color: #0f0;
+  background: url('images/doom_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
   font-family: 'Press Start 2P', monospace;
+  color: #00ff00;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 .overlay {
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 20px;
+  min-height: 100vh;
   text-align: center;
+}
+
+h1 {
+  color: red;
+  margin-bottom: 1rem;
 }
 
 .hud {
@@ -16,6 +25,7 @@ body {
   justify-content: center;
   gap: 2rem;
   margin-bottom: 1rem;
+  color: #00ff00;
 }
 
 .arena {
@@ -37,7 +47,24 @@ body {
   justify-content: center;
 }
 
-.terminal {
+button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 8px;
+  border: 2px solid red;
+  background-color: black;
+  color: red;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: red;
+  color: black;
+}
+
+.terminal,
+.narration-box {
   font-family: monospace;
   background: #111;
   color: #0f0;
@@ -50,22 +77,12 @@ body {
   margin-right: auto;
   white-space: pre-wrap;
   word-break: break-word;
+  line-height: 1.5;
+  overflow-y: auto;
 }
 
 .narration-box {
-  background-color: #111;
-  color: #0f0;
-  font-family: monospace;
-  font-size: 12px;
-  border: 2px solid red;
-  padding: 10px;
-  width: 90%;
   height: 200px;
-  margin: 1rem auto;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.5;
 }
 
 #muteBtn {
