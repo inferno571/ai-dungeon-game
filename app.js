@@ -149,5 +149,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("simFight")?.addEventListener("click", simulateEncounter);
   document.getElementById("simLoot")?.addEventListener("click", lootWeapon);
   document.getElementById("simReset")?.addEventListener("click", resetSim);
+  document.getElementById("simLog").innerText = narrationText;
+
   updateSimUI();
 });
