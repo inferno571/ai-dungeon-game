@@ -1,4 +1,4 @@
-// DOOM Crawler App.js - Polished version with SFX, Music, Gun-based combat, Spawn Sounds, and Cyberdemon logic
+// DOOM Crawler App.js - Enhanced with SFX and Smarter AI
 
 let player = {
   health: 100,
@@ -8,12 +8,7 @@ let player = {
   log: []
 };
 
-function getEnemyTypes() {
-  const baseEnemies = ["Imp", "Cacodemon", "Baron of Hell"];
-  if (player.level >= 2) baseEnemies.push("Cyberdemon");
-  return baseEnemies;
-}
-
+const enemyTypes = ["Imp", "Cacodemon", "Baron of Hell"];
 const weaponsPool = ["Shotgun", "Chainsaw", "Rocket Launcher", "Plasma Rifle"];
 
 let contract;
@@ -28,24 +23,9 @@ const abi = [
   "function getWeapons(address _player) public view returns (string[] memory)"
 ];
 
-const bgMusic = new Audio("sfx/bg_music.mp3");
-bgMusic.loop = true;
-bgMusic.volume = 0.3;
-
-function toggleMusic() {
-  if (bgMusic.paused) {
-    bgMusic.play();
-    document.getElementById("muteBtn").innerText = "🔊";
-  } else {
-    bgMusic.pause();
-    document.getElementById("muteBtn").innerText = "🔇";
-  }
-}
-
 function playSFX(name) {
-  const audio = new Audio(`sfx/${name}`);
-  audio.addEventListener("error", () => console.error(`Failed to load SFX: ${name}`));
-  audio.play();
+  const audio = new Audio(sfx/${name});
+  audio.play().catch(err => console.error("SFX error:", err));
 }
 
 async function connectWallet() {
@@ -58,7 +38,7 @@ async function connectWallet() {
   signer = provider.getSigner();
   contract = new ethers.Contract(contractAddress, abi, signer);
   const address = await signer.getAddress();
-  alert(`🔌 Connected as ${address}`);
+  alert(🔌 Connected as ${address});
 }
 
 async function startGame() {
@@ -68,23 +48,18 @@ async function startGame() {
     await tx.wait();
     alert("🎮 On-chain game started!");
     playSFX("power_surge.wav");
-    bgMusic.play();
   } catch (err) {
     console.error("Error starting game:", err);
     alert("❌ Could not start game");
   }
 }
 
-async function simulateEncounterWithWeapon(weapon) {
-  const enemyList = getEnemyTypes();
-  const enemy = enemyList[Math.floor(Math.random() * enemyList.length)];
-  const isCyberdemon = enemy === "Cyberdemon";
-  const damage = Math.floor(Math.random() * (isCyberdemon ? 60 : enemy === "Baron of Hell" ? 40 : 25)) + 10;
+async function simulateEncounter() {
+  const enemy = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+  const damage = Math.floor(Math.random() * (enemy === "Baron of Hell" ? 40 : 25)) + 10;
 
-  document.getElementById("enemy-image").src = `images/${enemy.toLowerCase().replace(/ /g, '_')}.png`;
+  document.getElementById("enemy-image").src = images/${enemy.toLowerCase().replace(/ /g, '_')}.png;
   document.getElementById("enemy-name").innerText = enemy;
-  playSFX(`${enemy.toLowerCase().replace(/ /g, '_')}_spawn.wav`);
-  playSFX(`${weapon.toLowerCase().replace(/ /g, '_')}_fire.wav`);
 
   player.kills++;
   player.health -= damage;
@@ -100,38 +75,28 @@ async function simulateEncounterWithWeapon(weapon) {
     playSFX("power_surge.wav");
   }
 
-  playSFX("imp_scream.wav");
-
   try {
     if (!contract) await connectWallet();
     const tx = await contract.logKill(enemy);
     await tx.wait();
+    playSFX("imp_scream.wav");
   } catch (err) {
     console.error("Error logging kill:", err);
   }
 
-  try {
-    const narration = await getGroqNarration(enemy, weapon);
-    player.log.unshift(`🩸 ${narration}\n`);
-    updateSimUI();
-  } catch (err) {
-    console.error("Error fetching narration:", err);
-  }
+  const narration = await getGroqNarration(enemy);
+  player.log.unshift(🩸 ${narration});
+  updateSimUI();
 }
 
 function lootWeapon() {
   const weapon = weaponsPool[Math.floor(Math.random() * weaponsPool.length)];
   if (!player.weapons.includes(weapon)) {
     player.weapons.push(weapon);
-    player.log.unshift(`🔫 Found: ${weapon}\n`);
+    player.log.unshift(🔫 Found: ${weapon});
     playSFX("pickup_weapon.wav");
-
-    const shootBtn = document.createElement("button");
-    shootBtn.innerText = `Shoot ${weapon}`;
-    shootBtn.onclick = () => simulateEncounterWithWeapon(weapon);
-    document.querySelector(".controls").appendChild(shootBtn);
   } else {
-    player.log.unshift(`🔁 Already have: ${weapon}\n`);
+    player.log.unshift(🔁 Already have: ${weapon});
   }
 
   if (contract) {
@@ -147,29 +112,22 @@ function resetSim() {
 }
 
 function updateSimUI() {
-  document.getElementById("hud-health").innerText = `❤️ Health: ${player.health}`;
-  document.getElementById("hud-level").innerText = `⚔️ Level: ${player.level}`;
-  document.getElementById("hud-kills").innerText = `💀 Kills: ${player.kills}`;
-  document.getElementById("simStats").innerText = `🧠 Weapons: ${player.weapons.join(", ")}`;
-  document.getElementById("simLog").innerText = player.log.slice(0, 5).join("\n\n");
-  updateDoomguyFace();
+  document.getElementById("hud-health").innerText = ❤️ Health: ${player.health};
+  document.getElementById("hud-level").innerText = ⚔️ Level: ${player.level};
+  document.getElementById("hud-kills").innerText = 💀 Kills: ${player.kills};
+  document.getElementById("simStats").innerText = 🧠 Weapons: ${player.weapons.join(", ")};
+  document.getElementById("simLog").innerText = player.log.slice(0, 5).join("\n");
 }
 
-function updateDoomguyFace() {
-  const face = document.getElementById("doomguy-face");
-  if (player.health >= 70) face.src = "images/doomguy_neutral.png";
-  else if (player.health >= 30) face.src = "images/doomguy_hurt.png";
-  else face.src = "images/doomguy_angry.png";
-}
+async function getGroqNarration(enemy) {
+  const prompt = You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back. Describe the battle in about 150 words. Player health: ${player.health}, weapon: ${player.weapons.at(-1) || 'fists'};
 
-async function getGroqNarration(enemy, weaponUsed) {
-  const prompt = `You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back using their ${weaponUsed}. Describe the brutal combat in 150 words. Player health: ${player.health}`;
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer YOUR_API_KEY_HERE"
+        "Authorization": "Bearer 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"
       },
       body: JSON.stringify({
         model: "meta-llama/llama-4-scout-17b-16e-instruct",
@@ -188,8 +146,8 @@ async function getGroqNarration(enemy, weaponUsed) {
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("connectWallet")?.addEventListener("click", connectWallet);
   document.getElementById("startGame")?.addEventListener("click", startGame);
+  document.getElementById("simFight")?.addEventListener("click", simulateEncounter);
   document.getElementById("simLoot")?.addEventListener("click", lootWeapon);
   document.getElementById("simReset")?.addEventListener("click", resetSim);
-  document.getElementById("muteBtn")?.addEventListener("click", toggleMusic);
   updateSimUI();
 });
