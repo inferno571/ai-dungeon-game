@@ -24,7 +24,7 @@ const abi = [
 ];
 
 function playSFX(name) {
-  const audio = new Audio(sfx/${name});
+  const audio = new Audio(sfx/${name};
   audio.play().catch(err => console.error("SFX error:", err));
 }
 
