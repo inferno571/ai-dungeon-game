@@ -127,7 +127,7 @@ async function getGroqNarration(enemy) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
+        "Authorization": "Bearer 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"
       },
       body: JSON.stringify({
         model: "meta-llama/llama-4-scout-17b-16e-instruct",
