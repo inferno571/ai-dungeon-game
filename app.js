@@ -1,5 +1,3 @@
-// DOOM Crawler App.js - Enhanced with SFX and Smarter AI
-
 let player = {
   health: 100,
   level: 1,
@@ -24,7 +22,7 @@ const abi = [
 ];
 
 function playSFX(name) {
-  const audio = new Audio(sfx/${name});
+  const audio = new Audio(`sfx/${name}`);
   audio.play().catch(err => console.error("SFX error:", err));
 }
 
@@ -38,7 +36,7 @@ async function connectWallet() {
   signer = provider.getSigner();
   contract = new ethers.Contract(contractAddress, abi, signer);
   const address = await signer.getAddress();
-  alert(🔌 Connected as ${address});
+  alert(`🔌 Connected as ${address}`);
 }
 
 async function startGame() {
@@ -58,11 +56,12 @@ async function simulateEncounter() {
   const enemy = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
   const damage = Math.floor(Math.random() * (enemy === "Baron of Hell" ? 40 : 25)) + 10;
 
-  document.getElementById("enemy-image").src = images/${enemy.toLowerCase().replace(/ /g, '_')}.png;
+  document.getElementById("enemy-image").src = `images/${enemy.toLowerCase().replace(/ /g, '_')}.png`;
   document.getElementById("enemy-name").innerText = enemy;
 
   player.kills++;
   player.health -= damage;
+
   if (player.health <= 0) {
     playSFX("death_roar.wav");
     alert("💀 You died. Game over.");
@@ -85,49 +84,58 @@ async function simulateEncounter() {
   }
 
   const narration = await getGroqNarration(enemy);
-  player.log.unshift(🩸 ${narration});
+  player.log.unshift(`🩸 ${narration}`);
   updateSimUI();
 }
 
-function lootWeapon() {
+async function lootWeapon() {
   const weapon = weaponsPool[Math.floor(Math.random() * weaponsPool.length)];
   if (!player.weapons.includes(weapon)) {
     player.weapons.push(weapon);
-    player.log.unshift(🔫 Found: ${weapon});
+    player.log.unshift(`🔫 Found: ${weapon}`);
     playSFX("pickup_weapon.wav");
-  } else {
-    player.log.unshift(🔁 Already have: ${weapon});
-  }
 
-  if (contract) {
-    contract.mintWeapon(weapon).catch(err => console.error("mintWeapon error", err));
+    try {
+      if (!contract) await connectWallet();
+      await contract.mintWeapon(weapon);
+    } catch (err) {
+      console.error("mintWeapon error", err);
+    }
+  } else {
+    player.log.unshift(`🔁 Already have: ${weapon}`);
   }
 
   updateSimUI();
 }
 
 function resetSim() {
-  player = { health: 100, level: 1, kills: 0, weapons: [], log: [] };
+  player = {
+    health: 100,
+    level: 1,
+    kills: 0,
+    weapons: [],
+    log: []
+  };
   updateSimUI();
 }
 
 function updateSimUI() {
-  document.getElementById("hud-health").innerText = ❤️ Health: ${player.health};
-  document.getElementById("hud-level").innerText = ⚔️ Level: ${player.level};
-  document.getElementById("hud-kills").innerText = 💀 Kills: ${player.kills};
-  document.getElementById("simStats").innerText = 🧠 Weapons: ${player.weapons.join(", ")};
+  document.getElementById("hud-health").innerText = `❤️ Health: ${player.health}`;
+  document.getElementById("hud-level").innerText = `⚔️ Level: ${player.level}`;
+  document.getElementById("hud-kills").innerText = `💀 Kills: ${player.kills}`;
+  document.getElementById("simStats").innerText = `🧠 Weapons: ${player.weapons.join(", ")}`;
   document.getElementById("simLog").innerText = player.log.slice(0, 5).join("\n");
 }
 
 async function getGroqNarration(enemy) {
-  const prompt = You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back. Describe the battle in about 150 words. Player health: ${player.health}, weapon: ${player.weapons.at(-1) || 'fists'};
+  const prompt = `You're a gritty DOOM narrator. A ${enemy} appeared and the player fought back. Describe the battle in about 150 words. Player health: ${player.health}, weapon: ${player.weapons.at(-1) || 'fists'}.`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
+        "Authorization": "Bearer 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"
       },
       body: JSON.stringify({
         model: "meta-llama/llama-4-scout-17b-16e-instruct",
@@ -136,6 +144,7 @@ async function getGroqNarration(enemy) {
       })
     });
     const data = await response.json();
+    console.log("Groq response:", data);
     return data?.choices?.[0]?.message?.content || "Another demon bites the dust.";
   } catch (err) {
     console.error("Groq error:", err);
