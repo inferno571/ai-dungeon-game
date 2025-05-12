@@ -1,115 +1,65 @@
-![image](https://github.com/user-attachments/assets/4aae5bec-ade4-457d-812e-69ecf1a7e838)
-# 🚀 AI Dungeon Crawler
-A Groq-powered, Monad-integrated browser game where you explore, loot, and evolve in an AI-generated world.
+# AI Dungeon Crawler
 
-# 📌 Problem Statement
-## Problem D – Using Monad as well as other partner technologies
+A browser-based dungeon crawler powered by Groq for dynamic storytelling and Monad for on-chain item minting and player progress tracking.
 
-## Build an AI dungeon crawler where Groq powers the narrative generation and Monad handles item minting and progress tracking.
+**Status:** Abandoned Prototype (Hackathon Build)
 
-# 🎯 Objective
-This project creates a real-time, procedurally narrated dungeon crawler using Groq for AI story generation and Monad to mint items and track player progress on-chain.
-It serves indie devs, gamers, and blockchain explorers who want rich, persistent, story-driven gameplay.
+## 🔍 Overview
 
-# 🧠 Team & Approach
-## Team Name:
-Inferno571
+This was built for a hackathon challenge focused on using Groq + Monad. It’s a DOOM-style dungeon crawler where:
 
-## Team Members:
-Solo Hacker: inferno571 (Dev / Designer / Builder)
+- **Groq** generates real-time narrative updates based on player input.
+- **Monad** mints in-game items and logs player runs on the blockchain.
 
-Your Approach:
+No real tokens, no NFTs — just a concept experiment in combining AI-driven gameplay with smart contracts.
 
-Chose this problem to combine AI storytelling + smart contract logic
+## 🧱 Tech Stack
 
-Challenges: merging real-time Groq responses with player input + blockchain UX
+- **Frontend:** HTML, CSS, JavaScript
+- **AI Narrative:** [Groq API](https://groq.com/)
+- **Blockchain:** [Monad Testnet](https://monad.xyz/)
+- **Smart Contracts:** Track levels, weapons, and kills
+- **Optional Simulate Mode:** For playing without wallet or gas
 
-Breakthrough: structuring the game loop to allow dynamic Groq response injection and minting flow via Monad smart contracts
+##  Features
 
-# 🛠️ Tech Stack
-Core Technologies Used:
+- Keyboard-based movement and interaction
+- Groq-driven story generation
+- Item minting and run logging on Monad
+- Terminal overlay with retro-inspired design
 
-Frontend: HTML, CSS, JavaScript
+## 🛠 How to Run Locally
 
-Backend: None (Static app with smart contract + API calls)
+### Requirements
 
-Database: Monad blockchain (for progress & minting)
+- Node.js
+- Groq API key (in `.env`)
+- MON testnet tokens (for full on-chain mode)
 
-APIs: Groq API (for narrative generation)
+### Setup
 
-Sponsor Technologies Used:
-
-✅ Groq: Powers the live narration and story branching system based on player actions
-
-✅ Monad: Used to mint items (NFT-style) and save player runs on-chain
-
-
-
-# ✨ Key Features
-✅ Groq-driven story generation based on your actions
-✅ Sound effects + keyboard-based movement & combat
-✅ Item minting using Monad smart contract
-✅ On-chain tracking of dungeon runs
-
-A browser-based, DOOM-themed dungeon crawler that combines **on-chain smart contracts** (Monad testnet) with **AI-generated narrative** (Groq).
-
-> ⚠️ No real money, no tokens, no NFTs — just brutal gameplay and AI flavor.
-
----
-
-## 🎮 Features
-
-- 🧠 AI narration powered by [Groq](https://groq.com/)
-- 🧱 Smart contract tracks level, kills, and weapons
-- 🔥 DOOM-style UI and terminal overlay
-- ⚔️ On-chain mode with Monad testnet (requires test MON)
-- 🧪 Simulate mode (no wallet or gas required)
-
-
-# 📽️ Demo & Deliverables
-Demo Video Link: [to be added]
-Pitch Deck / PPT Link: [to be added]
-
-✅ Tasks & Bonus Checklist
-✅ Followed at least 2 social channels + filled form
-✅ Shared Badges + submitted form
-✅ Signed up on Sprint.dev + submitted form
-
-# 🧪 How to Run the Project
-Requirements:
-
-Node.js (for local testing)
-
-.env file with Groq API key
-
-Local Setup:
-```
-# Clone the repo
+```bash
 git clone https://github.com/inferno571/ai-dungeon-game
-
-# Go to project directory
 cd ai-dungeon-game
-
-# Install dependencies
 npm install
-
-# Run locally
 npm run dev
-🧬 Future Scope
+Create a .env file and add:
 
-⚔️ Improvement of gameplay, integration of levels and new mechanics
+env
+Copy
+Edit
+GROQ_API_KEY=your_groq_api_key_here
+# Modes
+On-chain Mode: Interacts with Monad smart contract (requires wallet + test MON)
 
-🛡️ Improve blockchain wallet onboarding UX
+Simulate Mode: Play offline without wallet (mocked backend)
 
-⚔️ Multiplayer dungeon modes
-```
+#❌ Why It's Abandoned
+The game loop and integrations worked during the hackathon, but this was a solo build and didn’t evolve past the prototype phase. It’s left here as a reference or starting point for anyone interested in merging AI and blockchain in games.
 
-# 📎 Resources / Credits
-Groq API docs
+# Credits
+Groq API Docs
 
-Monad blockchain SDK
+Monad SDK + Testnet
 
-
-# 🏁 Final Words
-This solo build was a blast — blending story, crypto, and game logic into one project was a challenge but super rewarding. Big shout-out to the hackathon community for being 🔥. Onward to more dungeons and data!
-
+Built solo by inferno571 for a hackathon
